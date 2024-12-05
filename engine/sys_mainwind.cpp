@@ -65,6 +65,11 @@
 #include "sys.h"
 #include "materialsystem/imaterial.h"
 
+#if defined( WIN32 )
+#include <windows.h>
+#include <dwmapi.h>
+#pragma comment( lib, "dwmapi.lib" ) // include dwmapi.lib
+#endif // WIN32
 
 #if defined( _X360 )
   #include "xbox/xbox_win32stubs.h"
@@ -1046,6 +1051,14 @@ bool CGame::CreateGameWindow( void )
 		Error( "Fatal Error:  Unable to create game window!" );
 		return false;
 	}
+
+#if defined( WIN32 )
+    BOOL isDarkMode = TRUE;
+    HRESULT hr = DwmSetWindowAttribute(hwnd, 20, &isDarkMode, sizeof(isDarkMode));
+    if (FAILED(hr)) {
+		Error( "Fatal Error:  could not activate Immersive Dark Mode! Are you sure you're on Windows 10?" );
+    }
+#endif // WIN32
 
 	SetMainWindow( hwnd );
 
